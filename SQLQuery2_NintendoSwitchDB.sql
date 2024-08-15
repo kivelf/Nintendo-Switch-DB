@@ -1,7 +1,7 @@
 USE NintendoSwitchDB
 GO
 
--- in this file we're creating views, stored procedures and triggers for our Nintendo SWitch DB
+-- in this file we're creating views, stored procedures and triggers for our Nintendo Switch DB
 
 -- VIEWS
 -- view 1: top-selling games
