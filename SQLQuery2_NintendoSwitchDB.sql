@@ -14,8 +14,7 @@ SELECT
         WHEN total_sales BETWEEN 5 AND 10 THEN 'Hit'
         ELSE 'Average'
     END AS SalesCategory
-FROM Game
-ORDER BY total_sales DESC;
+FROM Game;
 GO
 
 
@@ -30,12 +29,11 @@ ORDER BY p.player_id;
 GO
 
 
--- view 3: developer game list
+-- view 3: developer/game(s) they've produced list
 CREATE OR ALTER VIEW DeveloperGameList AS
 SELECT d.name AS DeveloperName, g.name AS GameName, g.release_date
 FROM Developer d
-JOIN Game g ON d.dev_id = g.fk_dev_id
-ORDER BY d.name, g.release_date;
+JOIN Game g ON d.dev_id = g.fk_dev_id;
 GO
 
 
@@ -101,13 +99,13 @@ BEGIN
     SET @dev_id = (SELECT fk_dev_id FROM inserted);
     SET @release_date = (SELECT release_date FROM inserted);
 
-    IF @release_date < '2000-01-01'
+    IF @release_date < '2020-01-01'
     BEGIN
         UPDATE Developer
         SET country = 'Unknown'
         WHERE dev_id = @dev_id;
     END
-    ELSE IF @release_date >= '2000-01-01' AND @release_date < '2010-01-01'
+    ELSE IF @release_date >= '2020-01-01' AND @release_date < '2024-01-01'
     BEGIN
         UPDATE Developer
         SET country = 'Global'
@@ -126,7 +124,8 @@ GO
 
 -- TESTING VIEWS
 -- test view 1: top-selling games
-SELECT * FROM TopSellingGames;
+SELECT * FROM TopSellingGames
+ORDER BY SalesInMillions DESC;
 GO
 
 -- test view 2: players and their favourite games
@@ -134,8 +133,8 @@ SELECT * FROM PlayerFavourites;
 GO
 
 -- test view 3: developer game list
-SELECT * FROM DeveloperGameList;
-GO
+SELECT * FROM DeveloperGameList
+ORDER BY DeveloperName, release_date;
 
 
 
@@ -145,7 +144,7 @@ EXEC AddNewGame 'New Game', '2024-01-01', 'Action', 1, 59.99, 1, 1;
 GO
 
 -- test stored procedure 2: search players
-EXEC SearchPlayerByUsername 'Player123';
+EXEC SearchPlayerByUsername 'user1234';
 GO
 
 
@@ -153,7 +152,7 @@ GO
 -- TESTING TRIGGERS
 -- test trigger 1: preventing the deletion of a game with high sales
 -- attempts to delete a game with high sales (this should fail)
-DELETE FROM Game WHERE game_id = 1;
+DELETE FROM Game WHERE game_id = 3;
 GO
 
 -- checks the games list to confirm that the high-sales game was not deleted
@@ -162,6 +161,6 @@ GO
 
 
 -- test trigger 2: update a developer's country based on game release
-UPDATE Game SET release_date = '1995-01-01' WHERE game_id = 1;
+UPDATE Game SET release_date = '2024-01-01' WHERE game_id = 1;
 SELECT * FROM Developer WHERE dev_id = 1;
 GO
